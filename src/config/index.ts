@@ -1,3 +1,3 @@
 export const AppConfig = {
-  BACKEND_API: "http://v1.reco.edrogen.co",
+  BACKEND_API: "http://localhost:3000",
 };
