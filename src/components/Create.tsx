@@ -38,6 +38,8 @@ export const CreateApplication = () => {
       });
 
     applications.refetch();
+    setName("");
+    setDescription("");
     isLoading(false);
   };
 

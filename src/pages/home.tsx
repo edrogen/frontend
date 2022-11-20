@@ -10,6 +10,7 @@ import {
 import Layout from "../layotus/main";
 import { CreateApplication } from "../components/Create";
 import { useApplications } from "../hooks/useApplication";
+import { Link } from "react-router-dom";
 
 export const HomePage = () => {
   const details = useApplications();
@@ -58,7 +59,12 @@ export const HomePage = () => {
                           listStyle: "none",
                         }}
                       >
-                        <Box sx={{ display: "flex", gap: 2 }}>
+                        <Box
+                          sx={{ display: "flex", gap: 2 }}
+                          component={Link}
+                          style={{ textDecoration: "none" }}
+                          to={`/app/${application._id}`}
+                        >
                           <Box>
                             <Typography>{application.name}</Typography>
                             <Typography level="body3">
