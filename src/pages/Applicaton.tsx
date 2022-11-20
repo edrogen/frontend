@@ -1,6 +1,6 @@
 import Layout from "../layotus/main";
 import Chart from "react-apexcharts";
-import { Box, List, Sheet, Chip, CircularProgress } from "@mui/joy/";
+import { Box, List, Sheet, Chip, CircularProgress, Alert } from "@mui/joy/";
 import Typography from "@mui/joy/Typography";
 import Breadcrumbs from "@mui/joy/Breadcrumbs";
 import { Link as ReactRouterLink } from "react-router-dom";
@@ -8,6 +8,8 @@ import { Link } from "@mui/joy";
 import { CreateApplication } from "../components/Create";
 import { useApplicationDetails } from "../hooks/useApplicationDetails";
 import { useParams } from "react-router-dom";
+import { ApplicationStatus } from "../enum/application";
+import { PendingState } from "../components/pending";
 
 export const ApplicationPage = () => {
   const { id } = useParams();
@@ -74,6 +76,12 @@ export const ApplicationPage = () => {
                 {app.data?.app?.currentStatus}
               </Chip>
             </Box>
+
+            {app.data?.app?.currentStatus === ApplicationStatus.PENDING && (
+              <>
+                <PendingState appid={app.data?.app?._id} />
+              </>
+            )}
 
             <List
               sx={{
