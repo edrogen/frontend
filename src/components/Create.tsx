@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   TextField,
@@ -8,8 +9,38 @@ import {
   Typography,
 } from "@mui/joy";
 import Layout from "../layotus/main";
+import httpClient from "../http-common";
+import { useApplications } from "../hooks/useApplication";
+import { toast } from "react-hot-toast";
 
 export const CreateApplication = () => {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [loading, isLoading] = useState(false);
+  const applications = useApplications();
+
+  const submitData = async () => {
+    isLoading(true);
+    const data = {
+      name: name,
+      description: description,
+    };
+
+    await httpClient
+      .post("/application", data)
+      .then((response) => {
+        toast.success(`${response?.data?.name} created successfully`);
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+        toast.error("Unable to create application please contact admins");
+      });
+
+    applications.refetch();
+    isLoading(false);
+  };
+
   return (
     <>
       <Layout.SidePane>
@@ -46,7 +77,12 @@ export const CreateApplication = () => {
           </Box>
           <Box sx={{ mt: 2 }}>
             <Box sx={{ mt: 3, display: "flex", gap: 1 }}>
-              <TextField placeholder="Application Name" fullWidth />
+              <TextField
+                placeholder="Application Name"
+                fullWidth
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </Box>
           </Box>
 
@@ -56,6 +92,8 @@ export const CreateApplication = () => {
                 placeholder="Application Description"
                 minRows={3}
                 sx={{ width: "100%" }}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </Box>
           </Box>
@@ -88,7 +126,9 @@ export const CreateApplication = () => {
               justifyContent: "space-between",
             }}
           >
-            <Button fullWidth>Submit</Button>
+            <Button fullWidth onClick={() => submitData()} loading={loading}>
+              Submit
+            </Button>
           </Box>
         </Box>
       </Layout.SidePane>
