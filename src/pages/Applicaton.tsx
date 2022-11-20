@@ -1,13 +1,18 @@
 import Layout from "../layotus/main";
 import Chart from "react-apexcharts";
-import { Box, List, Sheet, Chip } from "@mui/joy/";
+import { Box, List, Sheet, Chip, CircularProgress } from "@mui/joy/";
 import Typography from "@mui/joy/Typography";
 import Breadcrumbs from "@mui/joy/Breadcrumbs";
 import { Link as ReactRouterLink } from "react-router-dom";
 import { Link } from "@mui/joy";
 import { CreateApplication } from "../components/Create";
+import { useApplicationDetails } from "../hooks/useApplicationDetails";
+import { useParams } from "react-router-dom";
 
 export const ApplicationPage = () => {
+  const { id } = useParams();
+  const app = useApplicationDetails(id!);
+
   const a = {
     options: {
       chart: {
@@ -28,68 +33,117 @@ export const ApplicationPage = () => {
   return (
     <>
       <CreateApplication />
+
       <Layout.Main>
-        <Breadcrumbs>
-          <Link to="/" component={ReactRouterLink}>
-            Home
-          </Link>
-
-          <Link to="/" component={ReactRouterLink}>
-            Application
-          </Link>
-        </Breadcrumbs>
-
-        <Box sx={{ mt: 2 }}>
-          <Typography level="h2">Application Name</Typography>
-          <Typography level="body1" sx={{ mt: 2 }}>
-            Application Description
-          </Typography>
-          <Chip
-            color="primary"
-            disabled={false}
-            size="md"
-            variant="outlined"
-            sx={{ mt: 3 }}
-          >
-            Application Status
-          </Chip>
-        </Box>
-
-        <List
-          sx={{
-            mt: 4,
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(500px, 1fr))",
-            gap: 2,
-          }}
-        >
-          <Sheet
-            component="li"
-            variant="outlined"
-            sx={{
-              borderRadius: "sm",
-              p: 2,
-              listStyle: "none",
+        {app.isLoading && (
+          <CircularProgress
+            style={{
+              margin: "auto",
+              width: "100%",
+              top: "50%",
             }}
-          >
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <Chart options={a.options} series={a.series} type="bar" />
+          />
+        )}
+
+        {app.data && (
+          <>
+            <Breadcrumbs>
+              <Link to="/" component={ReactRouterLink}>
+                Home
+              </Link>
+
+              <Link to="/" component={ReactRouterLink}>
+                {app.data?.app?.name}
+              </Link>
+            </Breadcrumbs>
+
+            <Box sx={{ mt: 1 }}>
+              <Typography level="h2" style={{ fontWeight: "bold" }}>
+                {app.data?.app?.name}
+              </Typography>
+              <Typography level="body1" sx={{ mt: 2 }}>
+                {app.data?.app?.description}
+              </Typography>
+              <Chip
+                color="primary"
+                disabled={false}
+                size="md"
+                variant="outlined"
+                sx={{ mt: 3 }}
+              >
+                {app.data?.app?.currentStatus}
+              </Chip>
             </Box>
-          </Sheet>
-          <Sheet
-            component="li"
-            variant="outlined"
-            sx={{
-              borderRadius: "sm",
-              p: 2,
-              listStyle: "none",
-            }}
-          >
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <Chart options={a.options} series={a.series} type="bar" />
-            </Box>
-          </Sheet>
-        </List>
+
+            <List
+              sx={{
+                mt: 4,
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(500px, 1fr))",
+                gap: 2,
+              }}
+            >
+              <Sheet
+                component="li"
+                variant="outlined"
+                sx={{
+                  borderRadius: "sm",
+                  p: 2,
+                  listStyle: "none",
+                }}
+              >
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <Chart
+                    options={{
+                      chart: {
+                        id: "Request By Month",
+                      },
+                      xaxis: {
+                        categories: app.data?.category,
+                      },
+                    }}
+                    series={[
+                      {
+                        name: "month",
+                        data: app.data?.data,
+                      },
+                    ]}
+                    type="area"
+                  />
+                </Box>
+              </Sheet>
+              <Sheet
+                component="li"
+                variant="outlined"
+                sx={{
+                  borderRadius: "sm",
+                  p: 2,
+                  listStyle: "none",
+                }}
+              >
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <Chart
+                    options={{
+                      chart: {
+                        id: "Request By Month",
+                      },
+                      xaxis: {
+                        categories: app.data?.category,
+                      },
+                    }}
+                    series={[
+                      {
+                        name: "month",
+                        data: app.data?.data,
+                      },
+                    ]}
+                    type="radar"
+                  />
+                </Box>
+              </Sheet>
+            </List>
+          </>
+        )}
       </Layout.Main>
     </>
   );
