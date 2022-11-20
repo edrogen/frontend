@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Sheet from "@mui/joy/Sheet";
 import Typography from "@mui/joy/Typography";
 import TextField from "@mui/joy/TextField";
@@ -8,40 +8,37 @@ import axios from "axios";
 import { AppConfig } from "../config";
 import { toast } from "react-hot-toast";
 
-export function LoginPage() {
+export function RegisterPage() {
   const [userMail, setUserMail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const token = JSON.parse(localStorage.getItem("session")!);
-    if (token) {
-      window.location.href = "/dashboard";
-    }
-  }, []);
 
   const submitLogin = async () => {
     setIsLoading(true);
     await axios({
       method: "post",
-      url: `${AppConfig.BACKEND_API}/auth/login`,
+      url: `${AppConfig.BACKEND_API}/auth/register`,
       headers: {
         "Content-Type": "application/json",
       },
       data: {
         email: userMail,
         password: password,
+        firstName: firstName,
+        lastName: lastName,
       },
     })
       .then(function (response) {
         localStorage.setItem("session", JSON.stringify(response.data));
-        toast.success("Login success");
+        toast.success("Registration success");
         setTimeout(function () {
           window.location.href = "/dashboard";
         }, 2000);
       })
       .catch(function (error) {
-        toast.success("Invalid email or password");
+        toast.success("Something went wrong");
         console.log(error);
       });
     setIsLoading(false);
@@ -70,8 +67,28 @@ export function LoginPage() {
             <Typography level="h4" component="h1">
               <b>Welcome!</b>
             </Typography>
-            <Typography level="body2">Sign in to continue.</Typography>
+            <Typography level="body2">
+              Create a new account to continue.
+            </Typography>
           </div>
+
+          <TextField
+            name="firstName"
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="John"
+            label="First Name"
+          />
+          <TextField
+            name="lastName"
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder="doe"
+            label="Last Name"
+          />
+
           <TextField
             name="email"
             type="email"
@@ -93,14 +110,14 @@ export function LoginPage() {
             loading={isLoading}
             onClick={() => submitLogin()}
           >
-            Log in
+            Sign Up
           </Button>
           <Typography
-            endDecorator={<Link href="/register">Sign up</Link>}
+            endDecorator={<Link href="/login">Sign In</Link>}
             fontSize="sm"
             sx={{ alignSelf: "center" }}
           >
-            Don&apos;t have an account?
+            Already have a account ?
           </Typography>
         </Sheet>
       </main>

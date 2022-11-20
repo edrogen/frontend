@@ -5,13 +5,14 @@ import { LoginPage } from "./pages/Login";
 import { ApplicationPage } from "./pages/Applicaton";
 import Layout from "./layotus/main";
 import { HeaderComponent } from "./components/Header";
+import { RegisterPage } from "./pages/Register";
 
 import { CssBaseline } from "@mui/joy";
 
 export const ApplicationRouter = () => {
   let routes = useRoutes([
     {
-      path: "/",
+      path: "/dashboard",
       element: (
         <Layout.Root>
           <CssBaseline />
@@ -25,8 +26,18 @@ export const ApplicationRouter = () => {
       ),
     },
     {
+      path: "/",
+      element: <LoginPage />,
+    },
+
+    {
       path: "/login",
       element: <LoginPage />,
+    },
+
+    {
+      path: "/register",
+      element: <RegisterPage />,
     },
 
     {
