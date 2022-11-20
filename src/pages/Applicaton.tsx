@@ -83,6 +83,13 @@ export const ApplicationPage = () => {
               </>
             )}
 
+
+            {app.data?.app?.currentStatus === ApplicationStatus.VALIDATING_DATA && (
+              <>
+                <PendingState appid={app.data?.app?._id} />
+              </>
+            )}
+
             <List
               sx={{
                 mt: 4,

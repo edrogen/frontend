@@ -12,16 +12,39 @@ import "../styles/file_input.css";
 import { toast } from "react-hot-toast";
 import { AppConfig } from "../config";
 import { getAuthStorage } from "../utils/jwt-token";
+import httpConfig from "../http-common";
+import { useApplicationDetails } from "../hooks/useApplicationDetails";
 
 export const PendingState = (appid: any) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const app = useApplicationDetails(appid?.appid);
+
+  const startValidation = () => {
+    httpConfig({
+      method: "post",
+      url: "/application/validation/start",
+      data: JSON.stringify({
+        appId: appid?.appid,
+      }),
+    })
+      .then(function (response) {
+        toast.success("Application status updated");
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        toast.error(error.message);
+        console.log(error);
+      });
+
+    app.refetch();
+  };
 
   const handleSubmit = async (event: any) => {
     setIsLoading(true);
     event.preventDefault();
     const formData = new FormData();
-    formData.append("file", selectedFile);
+    formData.append("file", selectedFile!);
     const session = getAuthStorage();
 
     try {
@@ -77,7 +100,12 @@ export const PendingState = (appid: any) => {
         </form>
       </Sheet>
 
-      <Button sx={{ mt: 3 }} color="success" size="lg">
+      <Button
+        sx={{ mt: 3 }}
+        color="success"
+        size="lg"
+        onClick={() => startValidation()}
+      >
         Continue to Next Step
       </Button>
     </>
